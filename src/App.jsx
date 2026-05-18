@@ -410,7 +410,7 @@ export default function SignalBoard() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-6",
+          model: "claude-sonnet-4-5-20251101",
           max_tokens: 1000,
           system: SONAR_CONTEXT,
           messages: [{ role: "user", content: searchQuery }],
@@ -418,12 +418,22 @@ export default function SignalBoard() {
       });
 
       const data = await response.json();
-      const rawText = data.content
-        ?.filter(item => item.type === "text")
-        .map(item => item.text)
-        .join("\n") || "";
 
-      // Parse the answer and structured JSON separately
+      if (data.type === "error" || !data.content) {
+        setSearchResult({
+          answer: `API error: ${data.error?.message || JSON.stringify(data)}`,
+          matchedSignals: [],
+          matchedPatterns: [],
+        });
+        setSearchLoading(false);
+        return;
+      }
+
+      const rawText = data.content
+        .filter(item => item.type === "text")
+        .map(item => item.text)
+        .join("\n");
+
       let answer = rawText;
       let matchedSignals = [];
       let matchedPatterns = [];
@@ -436,7 +446,7 @@ export default function SignalBoard() {
           matchedSignals = parsed.matchedSignalIds || [];
           matchedPatterns = parsed.matchedPatternIds || [];
         } catch (e) {
-          // JSON parse failed, just show the answer
+          // JSON block malformed, answer still shows
         }
       }
 
