@@ -410,7 +410,7 @@ export default function SignalBoard() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-5-20251101",
+          model: "claude-sonnet-4-6",
           max_tokens: 1000,
           system: SONAR_CONTEXT,
           messages: [{ role: "user", content: searchQuery }],
