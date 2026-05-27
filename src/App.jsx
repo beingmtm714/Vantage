@@ -329,6 +329,9 @@ const DailyPrepModule = ({ mobile, onIntegrationOpen }) => {
   const catColor = { nextStep: T.amber, strategicRec: T.accent, pattern: T.purple };
   const catBg   = { nextStep: T.amberDim, strategicRec: T.accentDim, pattern: T.purpleDim };
 
+  const CARD_W = 180;
+  const CARD_H = 160;
+
   return (
     <div style={{ background: T.surface, borderRadius: T.r, border: `1px solid ${T.border}`, overflow: "hidden", marginBottom: "14px" }}>
       {/* HEADER */}
@@ -341,108 +344,125 @@ const DailyPrepModule = ({ mobile, onIntegrationOpen }) => {
         </div>
       </div>
 
-      <div style={{ padding: mobile ? "12px" : "14px 16px" }}>
-        {/* UPCOMING MEETINGS */}
-        {upcomingFiltered.length > 0 && (
-          <div style={{ marginBottom: actionItems.length > 0 ? "16px" : 0 }}>
-            <div style={{ fontFamily: T.mono, fontSize: "9px", color: T.textDim, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "8px" }}>Upcoming Meetings · {upcomingFiltered.length}</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-              {upcomingFiltered.map(meeting => {
-                const isExpanded = expandedMeeting === meeting.id;
-                const prep = meetingPreps[meeting.id];
-                const relatedSignals = SIGNALS.filter(s => s.company === meeting.company || s.vcRef === meeting.vcRef);
-                const vcData = VC_RELATIONSHIPS.find(v => v.firm === meeting.vcRef);
-                const signalEntry = meeting.company ? Object.entries(SIGNAL_ACTIONS).find(([sid]) => SIGNALS.find(x => x.id === parseInt(sid))?.company === meeting.company) : null;
-                const actions = signalEntry ? signalEntry[1] : null;
-                return (
-                  <div key={meeting.id} style={{ borderRadius: T.r, border: `1px solid ${isExpanded ? T.accent : T.borderSubtle}`, overflow: "hidden" }}>
-                    <div onClick={() => setExpandedMeeting(isExpanded ? null : meeting.id)} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "9px 12px", background: isExpanded ? T.surfaceActive : T.bg, cursor: "pointer" }}>
-                      <span style={{ fontFamily: T.mono, fontSize: "10px", color: T.amber, flexShrink: 0, width: mobile ? "auto" : "130px" }}>{meeting.time}</span>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <span style={{ fontFamily: T.sans, fontSize: "12px", fontWeight: 600, color: T.text }}>{meeting.title}</span>
-                        {!mobile && <span style={{ fontFamily: T.mono, fontSize: "10px", color: T.textDim, marginLeft: "8px" }}>{meeting.attendees}</span>}
-                      </div>
-                      {!mobile && meeting.vcRef && <Tag label={meeting.vcRef} color={T.accent} bg={T.accentDim} />}
-                      <span style={{ fontFamily: T.mono, fontSize: "10px", color: isExpanded ? T.accent : T.textDim, flexShrink: 0 }}>{isExpanded ? "\u25B2" : "\u25BC"}</span>
+      {/* MEETINGS ROW */}
+      {upcomingFiltered.length > 0 && (
+        <div style={{ borderBottom: expandedMeeting ? `1px solid ${T.borderSubtle}` : "none" }}>
+          <div style={{ fontFamily: T.mono, fontSize: "9px", color: T.textDim, textTransform: "uppercase", letterSpacing: "0.06em", padding: mobile ? "10px 12px 6px" : "12px 16px 6px" }}>Meetings · {upcomingFiltered.length}</div>
+          <div style={{ display: "flex", gap: "8px", overflowX: "auto", WebkitOverflowScrolling: "touch", scrollbarWidth: "none", padding: mobile ? "0 12px 12px" : "0 16px 14px" }}>
+            {upcomingFiltered.map(meeting => {
+              const isActive = expandedMeeting === meeting.id;
+              return (
+                <div key={meeting.id} onClick={() => setExpandedMeeting(isActive ? null : meeting.id)}
+                  style={{ width: CARD_W, minWidth: CARD_W, height: CARD_H, flexShrink: 0, borderRadius: T.r, border: `1px solid ${isActive ? T.accent : T.borderSubtle}`, background: isActive ? T.surfaceActive : T.bg, cursor: "pointer", padding: "12px", display: "flex", flexDirection: "column", justifyContent: "space-between", boxSizing: "border-box" }}>
+                  <div>
+                    <div style={{ fontFamily: T.mono, fontSize: "10px", color: T.amber, marginBottom: "6px", letterSpacing: "0.02em" }}>{meeting.time}</div>
+                    <div style={{ fontFamily: T.sans, fontSize: "12px", fontWeight: 600, color: T.text, lineHeight: "1.35", marginBottom: "5px" }}
+                      title={meeting.title}>
+                      {meeting.title.length > 48 ? meeting.title.slice(0, 45) + "..." : meeting.title}
                     </div>
-                    {isExpanded && (
-                      <div style={{ padding: "12px", borderTop: `1px solid ${T.borderSubtle}`, background: T.surface }} onClick={e => e.stopPropagation()}>
-                        {mobile && <div style={{ fontFamily: T.mono, fontSize: "10px", color: T.textDim, marginBottom: "8px" }}>{meeting.attendees}</div>}
-                        {relatedSignals.length > 0 && (
-                          <div style={{ marginBottom: "10px" }}>
-                            <div style={{ fontFamily: T.mono, fontSize: "9px", color: T.textDim, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "6px" }}>Relationship Context</div>
-                            {relatedSignals.slice(0, 3).map(s => (
-                              <div key={s.id} style={{ display: "flex", gap: "6px", marginBottom: "4px" }}>
-                                <span style={{ color: T.accent, fontFamily: T.mono, fontSize: "10px", flexShrink: 0 }}>\u25B8</span>
-                                <span style={{ fontFamily: T.sans, fontSize: "11px", color: T.textMuted, lineHeight: "1.4" }}>{s.signal}</span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                        {vcData && (
-                          <div style={{ marginBottom: "10px", padding: "8px 10px", background: T.bg, borderRadius: "4px", border: `1px solid ${T.borderSubtle}` }}>
-                            <FieldRow label="VC Tier" value={vcData.tier} color={TIER_COLORS[vcData.tier]} />
-                            <FieldRow label="Contacts" value={vcData.contacts.join(", ")} />
-                            <FieldRow label="Signals" value={`${vcData.signals} captured`} />
-                            <FieldRow label="Deals" value={vcData.engagements > 0 ? `${vcData.engagements} attributed` : "None yet"} color={vcData.engagements > 0 ? T.green : T.textDim} />
-                          </div>
-                        )}
-                        {actions?.nextSteps?.length > 0 && (
-                          <div style={{ marginBottom: "10px" }}>
-                            <div style={{ fontFamily: T.mono, fontSize: "9px", color: T.amber, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "6px" }}>Open To-Dos</div>
-                            {actions.nextSteps.map((step, i) => (
-                              <div key={i} style={{ display: "flex", gap: "6px", marginBottom: "4px" }}>
-                                <span style={{ color: T.amber, fontFamily: T.mono, fontSize: "10px", flexShrink: 0 }}>{">>"}</span>
-                                <span style={{ fontFamily: T.sans, fontSize: "11px", color: T.textMuted }}>{step}</span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                        <div style={{ display: "flex", gap: "6px" }}>
-                          <button onClick={() => generateMeetingPrep(meeting)} disabled={prepLoading === meeting.id} style={{ flex: 1, padding: "7px 12px", border: `1px solid ${T.accent}`, borderRadius: T.r, fontFamily: T.mono, fontSize: "10px", cursor: "pointer", background: T.accentDim, color: prepLoading === meeting.id ? T.textDim : T.accent, textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                            {prepLoading === meeting.id ? "Generating..." : prep ? "Regenerate Prep" : "Generate Prep Note"}
-                          </button>
-                          <button onClick={() => onIntegrationOpen({ title: `Prep: ${meeting.title}`, type: "meeting", source: { name: meeting.attendees }, mentioned: meeting.date, due: meeting.date })} style={{ padding: "7px 12px", border: `1px solid ${T.border}`, borderRadius: T.r, fontFamily: T.mono, fontSize: "10px", cursor: "pointer", background: T.surfaceActive, color: T.textMuted, textTransform: "uppercase", letterSpacing: "0.04em" }}>CRM</button>
-                        </div>
-                        {prep && (
-                          <div style={{ marginTop: "10px", padding: "10px 12px", background: "rgba(79,140,255,0.04)", borderRadius: T.r, border: `1px solid ${T.accentDim}` }}>
-                            <div style={{ fontFamily: T.mono, fontSize: "9px", color: T.accent, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "6px" }}>AI Prep Note</div>
-                            <p style={{ fontFamily: T.sans, fontSize: "12px", color: T.text, lineHeight: "1.6", margin: 0 }}>{prep}</p>
-                          </div>
-                        )}
-                      </div>
-                    )}
+                    <div style={{ fontFamily: T.mono, fontSize: "10px", color: T.textDim, lineHeight: "1.3" }}>{meeting.attendees}</div>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* ACTION ITEMS */}
-        {actionItems.length > 0 && (
-          <div>
-            <div style={{ fontFamily: T.mono, fontSize: "9px", color: T.textDim, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "8px" }}>Action Items · {actionItems.length} due</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-              {actionItems.map(item => (
-                <div key={item.id} style={{ display: "flex", gap: "8px", alignItems: "flex-start", padding: "8px 10px", background: T.bg, borderRadius: "4px", border: `1px solid ${T.borderSubtle}` }}>
-                  <div style={{ flexShrink: 0, paddingTop: "1px" }}><Tag label={catLabel[item.category]} color={catColor[item.category]} bg={catBg[item.category]} /></div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    {item.company && <span style={{ fontFamily: T.sans, fontSize: "11px", fontWeight: 600, color: T.text, marginRight: "6px" }}>{item.company}</span>}
-                    <span style={{ fontFamily: T.sans, fontSize: "11px", color: T.textMuted }}>{item.title}</span>
-                    {item.due && <div style={{ fontFamily: T.mono, fontSize: "9px", color: T.amber, marginTop: "2px" }}>Due {item.due}</div>}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+                    {meeting.vcRef
+                      ? <span style={{ fontFamily: T.mono, fontSize: "9px", color: isActive ? T.accent : T.textDim, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "130px" }}>{meeting.vcRef}</span>
+                      : <span />}
+                    <span style={{ fontFamily: T.mono, fontSize: "10px", color: isActive ? T.accent : T.textDim }}>{isActive ? "\u25B2" : "\u25BC"}</span>
                   </div>
-                  <button onClick={() => onIntegrationOpen({ title: item.title, type: item.category, source: { name: item.company || "Sonar" }, mentioned: item.mentioned, due: item.due })} style={{ padding: "3px 8px", border: `1px solid ${T.border}`, borderRadius: "3px", fontFamily: T.mono, fontSize: "9px", cursor: "pointer", background: T.surfaceActive, color: T.textDim, textTransform: "uppercase", flexShrink: 0 }}>+</button>
                 </div>
-              ))}
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* EXPANDED MEETING DETAIL */}
+      {expandedMeeting && (() => {
+        const meeting = UPCOMING_MEETINGS.find(m => m.id === expandedMeeting);
+        if (!meeting) return null;
+        const prep = meetingPreps[meeting.id];
+        const relatedSignals = SIGNALS.filter(s => s.company === meeting.company || s.vcRef === meeting.vcRef);
+        const vcData = VC_RELATIONSHIPS.find(v => v.firm === meeting.vcRef);
+        const signalEntry = meeting.company ? Object.entries(SIGNAL_ACTIONS).find(([sid]) => SIGNALS.find(x => x.id === parseInt(sid))?.company === meeting.company) : null;
+        const actions = signalEntry ? signalEntry[1] : null;
+        return (
+          <div style={{ padding: mobile ? "12px" : "14px 16px", borderBottom: actionItems.length > 0 ? `1px solid ${T.borderSubtle}` : "none" }}>
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginBottom: "12px" }}>
+              {relatedSignals.length > 0 && (
+                <div style={{ flex: "1 1 280px", padding: "10px 12px", background: T.bg, borderRadius: T.r, border: `1px solid ${T.borderSubtle}` }}>
+                  <div style={{ fontFamily: T.mono, fontSize: "9px", color: T.textDim, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "7px" }}>Relationship Context</div>
+                  {relatedSignals.slice(0, 3).map(s => (
+                    <div key={s.id} style={{ display: "flex", gap: "6px", marginBottom: "4px" }}>
+                      <span style={{ color: T.accent, fontFamily: T.mono, fontSize: "10px", flexShrink: 0 }}>&#9656;</span>
+                      <span style={{ fontFamily: T.sans, fontSize: "11px", color: T.textMuted, lineHeight: "1.4" }}>{s.signal}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div style={{ flex: "0 1 200px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                {vcData && (
+                  <div style={{ padding: "10px 12px", background: T.bg, borderRadius: T.r, border: `1px solid ${T.borderSubtle}` }}>
+                    <FieldRow label="VC Tier" value={vcData.tier} color={TIER_COLORS[vcData.tier]} />
+                    <FieldRow label="Contacts" value={vcData.contacts.join(", ")} />
+                    <FieldRow label="Signals" value={`${vcData.signals} captured`} />
+                    <FieldRow label="Deals" value={vcData.engagements > 0 ? `${vcData.engagements} attributed` : "None yet"} color={vcData.engagements > 0 ? T.green : T.textDim} />
+                  </div>
+                )}
+                {actions?.nextSteps?.length > 0 && (
+                  <div style={{ padding: "10px 12px", background: T.bg, borderRadius: T.r, border: `1px solid ${T.borderSubtle}` }}>
+                    <div style={{ fontFamily: T.mono, fontSize: "9px", color: T.amber, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "6px" }}>Open To-Dos</div>
+                    {actions.nextSteps.map((step, i) => (
+                      <div key={i} style={{ display: "flex", gap: "6px", marginBottom: "3px" }}>
+                        <span style={{ color: T.amber, fontFamily: T.mono, fontSize: "10px", flexShrink: 0 }}>{">>"}</span>
+                        <span style={{ fontFamily: T.sans, fontSize: "11px", color: T.textMuted }}>{step}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+            {prep && (
+              <div style={{ marginBottom: "10px", padding: "10px 12px", background: "rgba(79,140,255,0.04)", borderRadius: T.r, border: `1px solid ${T.accentDim}` }}>
+                <div style={{ fontFamily: T.mono, fontSize: "9px", color: T.accent, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "6px" }}>AI Prep Note</div>
+                <p style={{ fontFamily: T.sans, fontSize: "12px", color: T.text, lineHeight: "1.6", margin: 0 }}>{prep}</p>
+              </div>
+            )}
+            <div style={{ display: "flex", gap: "6px" }}>
+              <button onClick={() => generateMeetingPrep(meeting)} disabled={prepLoading === meeting.id} style={{ flex: 1, padding: "7px 12px", border: `1px solid ${T.accent}`, borderRadius: T.r, fontFamily: T.mono, fontSize: "10px", cursor: "pointer", background: T.accentDim, color: prepLoading === meeting.id ? T.textDim : T.accent, textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                {prepLoading === meeting.id ? "Generating..." : prep ? "Regenerate Prep" : "Generate Prep Note"}
+              </button>
+              <button onClick={() => onIntegrationOpen({ title: `Prep: ${meeting.title}`, type: "meeting", source: { name: meeting.attendees }, mentioned: meeting.date, due: meeting.date })} style={{ padding: "7px 14px", border: `1px solid ${T.border}`, borderRadius: T.r, fontFamily: T.mono, fontSize: "10px", cursor: "pointer", background: T.surfaceActive, color: T.textMuted, textTransform: "uppercase", letterSpacing: "0.04em" }}>CRM</button>
             </div>
           </div>
-        )}
+        );
+      })()}
 
-        {upcomingFiltered.length === 0 && actionItems.length === 0 && (
-          <div style={{ textAlign: "center", padding: "16px", fontFamily: T.mono, fontSize: "10px", color: T.textDim }}>No meetings or actions for this period</div>
-        )}
-      </div>
+      {/* ACTION ITEMS ROW */}
+      {actionItems.length > 0 && (
+        <div>
+          <div style={{ fontFamily: T.mono, fontSize: "9px", color: T.textDim, textTransform: "uppercase", letterSpacing: "0.06em", padding: mobile ? "10px 12px 6px" : "12px 16px 6px" }}>Action Items · {actionItems.length} due</div>
+          <div style={{ display: "flex", gap: "8px", overflowX: "auto", WebkitOverflowScrolling: "touch", scrollbarWidth: "none", padding: mobile ? "0 12px 12px" : "0 16px 14px" }}>
+            {actionItems.map(item => (
+              <div key={item.id} style={{ width: CARD_W, minWidth: CARD_W, height: CARD_H - 20, flexShrink: 0, borderRadius: T.r, border: `1px solid ${T.borderSubtle}`, background: T.bg, padding: "12px", display: "flex", flexDirection: "column", justifyContent: "space-between", boxSizing: "border-box" }}>
+                <div>
+                  <div style={{ marginBottom: "6px" }}><Tag label={catLabel[item.category]} color={catColor[item.category]} bg={catBg[item.category]} /></div>
+                  {item.company && <div style={{ fontFamily: T.sans, fontSize: "12px", fontWeight: 600, color: T.text, marginBottom: "4px" }}>{item.company}</div>}
+                  <div style={{ fontFamily: T.sans, fontSize: "11px", color: T.textMuted, lineHeight: "1.35" }}>
+                    {item.title.length > 70 ? item.title.slice(0, 67) + "..." : item.title}
+                  </div>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+                  {item.due && <span style={{ fontFamily: T.mono, fontSize: "9px", color: T.amber }}>Due {item.due.slice(5)}</span>}
+                  <button onClick={() => onIntegrationOpen({ title: item.title, type: item.category, source: { name: item.company || "Sonar" }, mentioned: item.mentioned, due: item.due })} style={{ padding: "2px 7px", border: `1px solid ${T.border}`, borderRadius: "3px", fontFamily: T.mono, fontSize: "9px", cursor: "pointer", background: T.surfaceActive, color: T.textDim, textTransform: "uppercase" }}>+</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {upcomingFiltered.length === 0 && actionItems.length === 0 && (
+        <div style={{ textAlign: "center", padding: "20px", fontFamily: T.mono, fontSize: "10px", color: T.textDim }}>No meetings or actions for this period</div>
+      )}
     </div>
   );
 };
