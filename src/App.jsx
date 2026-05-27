@@ -969,19 +969,13 @@ Write a 3-sentence executive summary of this BD activity. Name specific companie
       <div style={{ borderBottom: `1px solid ${T.borderSubtle}`, padding: `0 ${px}`, overflowX: "auto", WebkitOverflowScrolling: "touch", scrollbarWidth: "none" }}>
         <div style={{ maxWidth: "1100px", margin: "0 auto", display: "flex", height: "36px", alignItems: "center" }}>
           {[
-            { label: "Daily Prep",  scrollId: "section-prep",    switchTab: null },
-            { label: "Ask Sonar",   scrollId: "section-search",  switchTab: null },
-            { label: "Signals",     scrollId: "section-signals", switchTab: "signals" },
-            { label: "Patterns",    scrollId: "section-signals", switchTab: "patterns" },
-            { label: "VCs",         scrollId: "section-signals", switchTab: "vcs" },
-            { label: "Brief",       scrollId: "section-signals", switchTab: "brief" },
-            { label: "Data Sync",   scrollId: "section-sync",    switchTab: null },
-          ].map(({ label, scrollId, switchTab }) => (
+            { label: "Daily Prep", scrollId: "section-prep" },
+            { label: "Ask Sonar",  scrollId: "section-search" },
+            { label: "Signals",    scrollId: "section-signals" },
+            { label: "Data Sync",  scrollId: "section-sync" },
+          ].map(({ label, scrollId }) => (
             <button key={label}
-              onClick={() => {
-                if (switchTab) setTab(switchTab);
-                setTimeout(() => document.getElementById(scrollId)?.scrollIntoView({ behavior: "smooth", block: "start" }), switchTab ? 50 : 0);
-              }}
+              onClick={() => document.getElementById(scrollId)?.scrollIntoView({ behavior: "smooth", block: "start" })}
               style={{ padding: "0 14px", height: "36px", border: "none", background: "transparent", fontFamily: T.mono, fontSize: "10px", color: T.textDim, cursor: "pointer", whiteSpace: "nowrap", textTransform: "uppercase", letterSpacing: "0.06em", flexShrink: 0 }}>
               {label}
             </button>
