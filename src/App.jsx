@@ -16,7 +16,7 @@ const useIsMobile = (breakpoint = 640) => {
 const T = {
   bg: "#0C0D0F", surface: "#141518", surfaceHover: "#1A1B20", surfaceActive: "#1E1F25",
   border: "#2A2B32", borderSubtle: "#1E1F25",
-  text: "#E8E9EC", textMuted: "#8B8D98", textDim: "#5C5E69",
+  text: "#E8E9EC", textMuted: "#C0C8DA", textDim: "#8096B8",
   accent: "#4F8CFF", accentDim: "rgba(79,140,255,0.12)",
   green: "#34D399", greenDim: "rgba(52,211,153,0.12)",
   amber: "#FBBF24", amberDim: "rgba(251,191,36,0.12)",
@@ -347,7 +347,7 @@ const DailyPrepModule = ({ mobile, onIntegrationOpen }) => {
       {/* MEETINGS ROW */}
       {upcomingFiltered.length > 0 && (
         <div style={{ borderBottom: expandedMeeting ? `1px solid ${T.borderSubtle}` : "none" }}>
-          <div style={{ fontFamily: T.mono, fontSize: "9px", color: T.textDim, textTransform: "uppercase", letterSpacing: "0.06em", padding: mobile ? "10px 12px 6px" : "12px 16px 6px" }}>Meetings · {upcomingFiltered.length}</div>
+          <div style={{ fontFamily: T.mono, fontSize: "10px", color: T.text, textTransform: "uppercase", letterSpacing: "0.06em", padding: mobile ? "10px 12px 6px" : "12px 16px 6px" }}>Meetings · {upcomingFiltered.length}</div>
           <div style={{ display: "flex", gap: "8px", overflowX: "auto", WebkitOverflowScrolling: "touch", scrollbarWidth: "none", padding: mobile ? "0 12px 12px" : "0 16px 14px" }}>
             {upcomingFiltered.map(meeting => {
               const isActive = expandedMeeting === meeting.id;
@@ -439,7 +439,7 @@ const DailyPrepModule = ({ mobile, onIntegrationOpen }) => {
       {/* ACTION ITEMS ROW */}
       {actionItems.length > 0 && (
         <div>
-          <div style={{ fontFamily: T.mono, fontSize: "9px", color: T.textDim, textTransform: "uppercase", letterSpacing: "0.06em", padding: mobile ? "10px 12px 6px" : "12px 16px 6px" }}>Action Items · {actionItems.length} due</div>
+          <div style={{ fontFamily: T.mono, fontSize: "10px", color: T.text, textTransform: "uppercase", letterSpacing: "0.06em", padding: mobile ? "10px 12px 6px" : "12px 16px 6px" }}>Action Items · {actionItems.length} due</div>
           <div style={{ display: "flex", gap: "8px", overflowX: "auto", WebkitOverflowScrolling: "touch", scrollbarWidth: "none", padding: mobile ? "0 12px 12px" : "0 16px 14px" }}>
             {actionItems.map(item => (
               <div key={item.id} style={{ width: CARD_W, minWidth: CARD_W, height: CARD_H - 20, flexShrink: 0, borderRadius: T.r, border: `1px solid ${T.borderSubtle}`, background: T.bg, padding: "12px", display: "flex", flexDirection: "column", justifyContent: "space-between", boxSizing: "border-box" }}>
