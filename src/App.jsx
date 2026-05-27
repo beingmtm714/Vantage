@@ -177,12 +177,12 @@ const ScrollRow = ({ children, style: s }) => (
 
 // ─── TOOLTIP ───
 const TOOLTIPS = {
-  intake: "Every meeting you take generates signal. Connect your notetaker and Sonar auto-extracts structured intel — company, stage, signal type, VC ref — without manual entry. The longer you run it, the richer the dataset.",
-  signals: "The raw intelligence layer. Each card is a signal captured from a real conversation — filtered by function, stage, and type. Expand any card to see enrichment data pulled from Crunchbase, LinkedIn, and news.",
-  patterns: "Sonar aggregates signals into themes across your whole conversation history. When four Series A founders ask the same question in a month, that's not noise — it's a pattern worth acting on.",
-  vcs: "Tracks which VC relationships are generating signal and converting to commercial engagements. The progress bar measures against a 12-month target. Attribution flows from first conversation to signed search.",
-  askSonar: "Natural language search across all signals, patterns, and live web data. Ask it anything about the market — it synthesizes your proprietary conversation data with current news and returns a grounded answer.",
-  brief: "Your monthly performance brief for executive distribution. Surfaces BD activity, VC pipeline conversion, and pattern intelligence in a shareable format. The OKRs and metrics shown can be customized per user — individual contributors track to personal targets while all metrics roll up to firm-wide quarterly goals.",
+  intake: "Sonar extracts structured signals from meeting notes without manual entry. Connect a notetaker (Granola, Otter, Fathom) to auto-sync meetings, or paste raw notes directly. Each capture is tagged by company, stage, signal type, and VC reference.",
+  signals: "The raw intelligence layer. Each card captures a BD conversation signal tagged by company, stage, function, and type. Expand any card for source details, Crunchbase and LinkedIn enrichment, open to-dos, and strategic next steps.",
+  patterns: "Sonar aggregates signals into recurring themes across the full conversation history. When multiple companies surface the same archetype or challenge in a month, that becomes a pattern worth distributing to the team and acting on proactively.",
+  vcs: "Tracks VC relationships by tier (active, building, prospect), signal count, and commercial engagement attribution. The 12-month firm target is 15+ active relationships. Every attribution links a first conversation to a signed search mandate.",
+  askSonar: "Natural language search across all signals, patterns, VC data, and live web intelligence. Ask any market question in plain English. Sonar synthesizes proprietary BD data with current news and returns a grounded answer with cited signal references.",
+  brief: "Monthly BD performance brief designed for executive distribution. Shows signal activity, VC pipeline conversion, pattern intelligence, and OKR progress in one exportable view. Individual contributors have personal monthly targets that roll up to shared firm-wide quarterly OKRs visible to every team member.",
 };
 const Tooltip = ({ id, children }) => {
   const [coords, setCoords] = useState(null);
