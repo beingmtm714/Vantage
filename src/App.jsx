@@ -340,9 +340,9 @@ const DailyPrepModule = ({ mobile, onIntegrationOpen }) => {
   const CARD_H = 160;
 
   return (
-    <div style={{ marginBottom: "20px" }}>
+    <div style={{ background: T.surface, borderRadius: T.r, border: `1px solid ${T.border}`, overflow: "hidden", marginBottom: "14px" }}>
       {/* HEADER */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: mobile ? "10px 12px" : "12px 16px", borderBottom: `1px solid ${T.borderSubtle}` }}>
         <span style={{ fontFamily: T.mono, fontSize: "11px", fontWeight: 600, color: T.text, textTransform: "uppercase", letterSpacing: "0.04em" }}>Daily Prep</span>
         <div style={{ display: "flex", gap: "4px" }}>
           {[["day", "Today"], ["week", "This Week"]].map(([p, label]) => (
@@ -354,8 +354,8 @@ const DailyPrepModule = ({ mobile, onIntegrationOpen }) => {
       {/* MEETINGS ROW */}
       {upcomingFiltered.length > 0 && (
         <div style={{ borderBottom: expandedMeeting ? `1px solid ${T.borderSubtle}` : "none" }}>
-          <div style={{ fontFamily: T.mono, fontSize: "10px", color: T.text, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "8px" }}>Meetings · {upcomingFiltered.length}</div>
-          <div style={{ display: "flex", gap: "8px", overflowX: "auto", WebkitOverflowScrolling: "touch", scrollbarWidth: "none", padding: "0 0 4px" }}>
+          <div style={{ fontFamily: T.mono, fontSize: "10px", color: T.textDim, textTransform: "uppercase", letterSpacing: "0.06em", padding: mobile ? "10px 12px 6px" : "12px 16px 6px" }}>Meetings · {upcomingFiltered.length}</div>
+          <div style={{ display: "flex", gap: "8px", overflowX: "auto", WebkitOverflowScrolling: "touch", scrollbarWidth: "none", padding: mobile ? "0 12px 12px" : "0 16px 14px" }}>
             {upcomingFiltered.map(meeting => {
               const isActive = expandedMeeting === meeting.id;
               return (
@@ -392,7 +392,7 @@ const DailyPrepModule = ({ mobile, onIntegrationOpen }) => {
         const signalEntry = meeting.company ? Object.entries(SIGNAL_ACTIONS).find(([sid]) => SIGNALS.find(x => x.id === parseInt(sid))?.company === meeting.company) : null;
         const actions = signalEntry ? signalEntry[1] : null;
         return (
-          <div style={{ padding: "14px 0", borderBottom: actionItems.length > 0 ? `1px solid ${T.borderSubtle}` : "none" }}>
+          <div style={{ padding: mobile ? "10px 12px 12px" : "12px 16px 14px", borderBottom: actionItems.length > 0 ? `1px solid ${T.borderSubtle}` : "none" }}>
             <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", flexDirection: mobile ? "column" : "row", marginBottom: "12px" }}>
               {relatedSignals.length > 0 && (
                 <div style={{ flex: "1 1 280px", padding: "10px 12px", background: T.bg, borderRadius: T.r, border: `1px solid ${T.borderSubtle}` }}>
@@ -446,8 +446,8 @@ const DailyPrepModule = ({ mobile, onIntegrationOpen }) => {
       {/* ACTION ITEMS ROW */}
       {actionItems.length > 0 && (
         <div>
-          <div style={{ fontFamily: T.mono, fontSize: "10px", color: T.text, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "8px" }}>Action Items · {actionItems.length} due</div>
-          <div style={{ display: "flex", gap: "8px", overflowX: "auto", WebkitOverflowScrolling: "touch", scrollbarWidth: "none", padding: "0 0 4px" }}>
+          <div style={{ fontFamily: T.mono, fontSize: "10px", color: T.textDim, textTransform: "uppercase", letterSpacing: "0.06em", padding: mobile ? "10px 12px 6px" : "12px 16px 6px" }}>Action Items · {actionItems.length} due</div>
+          <div style={{ display: "flex", gap: "8px", overflowX: "auto", WebkitOverflowScrolling: "touch", scrollbarWidth: "none", padding: mobile ? "0 12px 12px" : "0 16px 14px" }}>
             {actionItems.map(item => (
               <div key={item.id} style={{ width: CARD_W, minWidth: CARD_W, height: CARD_H - 20, flexShrink: 0, borderRadius: T.r, border: `1px solid ${T.borderSubtle}`, background: T.surface, padding: "12px", display: "flex", flexDirection: "column", justifyContent: "space-between", boxSizing: "border-box" }}>
                 <div>
