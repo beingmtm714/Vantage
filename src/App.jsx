@@ -998,8 +998,8 @@ Each bullet must name specific companies or VCs and include a number. 13-18 word
       </div>
 
       {/* NAV */}
-      <div style={{ borderBottom: `1px solid ${T.borderSubtle}`, padding: `0 ${px}`, overflowX: "auto", WebkitOverflowScrolling: "touch", scrollbarWidth: "none", msOverflowStyle: "none" }}>
-        <div style={{ maxWidth: "1100px", margin: "0 auto", display: "flex", height: "36px", alignItems: "center" }}>
+      <div style={{ borderBottom: `1px solid ${T.border}`, padding: `0 ${px}`, overflowX: "auto", WebkitOverflowScrolling: "touch", scrollbarWidth: "none", msOverflowStyle: "none", background: T.surface }}>
+        <div style={{ maxWidth: "1100px", margin: "0 auto", display: "flex", height: "44px", alignItems: "center" }}>
           {[
             { label: "Daily Prep", scrollId: "section-prep" },
             { label: "Ask Sonar",  scrollId: "section-search" },
@@ -1008,7 +1008,7 @@ Each bullet must name specific companies or VCs and include a number. 13-18 word
           ].map(({ label, scrollId }) => (
             <button key={label}
               onClick={() => document.getElementById(scrollId)?.scrollIntoView({ behavior: "smooth", block: "start" })}
-              style={{ padding: "0 14px", height: "36px", border: "none", background: "transparent", fontFamily: T.mono, fontSize: "10px", color: T.textDim, cursor: "pointer", whiteSpace: "nowrap", textTransform: "uppercase", letterSpacing: "0.06em", flexShrink: 0 }}>
+              style={{ padding: "0 18px", height: "44px", border: "none", background: "transparent", fontFamily: T.mono, fontSize: "11px", color: T.textMuted, cursor: "pointer", whiteSpace: "nowrap", textTransform: "uppercase", letterSpacing: "0.08em", flexShrink: 0 }}>
               {label}
             </button>
           ))}
