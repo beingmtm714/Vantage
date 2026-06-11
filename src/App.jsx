@@ -44,6 +44,56 @@ const FieldRow = ({ label, value, color }) => (
   </div>
 );
 
+// ─── ICEBERG PANEL ───
+const IcebergPanel = ({ mobile }) => (
+  <div style={{ background: T.surface, borderRadius: T.r, border: `1px solid ${T.border}`, overflow: "hidden", marginBottom: "14px" }}>
+
+    {/* ABOVE WATERLINE */}
+    <div style={{ padding: mobile ? "16px 14px 14px" : "20px 24px 18px" }}>
+      <div style={{ fontFamily: T.mono, fontSize: "9px", color: T.textDim, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "12px" }}>
+        In use now, uncoordinated
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: mobile ? "1fr" : "repeat(2, 1fr)", gap: "8px" }}>
+        {account.newReality.map((item, i) => (
+          <div key={i} style={{ display: "flex", gap: "10px", alignItems: "flex-start", padding: "10px 12px", background: T.bg, borderRadius: T.r, border: `1px solid ${T.borderSubtle}` }}>
+            <span style={{ color: T.amber, fontFamily: T.mono, fontSize: "11px", flexShrink: 0, paddingTop: "1px" }}>~</span>
+            <span style={{ fontFamily: T.sans, fontSize: "12px", color: T.textMuted, lineHeight: "1.5" }}>{item}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* WATERLINE */}
+    <div style={{ position: "relative", borderTop: `2px solid ${T.accent}`, margin: "0" }}>
+      <span style={{
+        position: "absolute", top: "50%", left: mobile ? "14px" : "24px",
+        transform: "translateY(-50%)",
+        fontFamily: T.mono, fontSize: "9px", color: T.accent,
+        background: T.surface, padding: "0 8px",
+        textTransform: "uppercase", letterSpacing: "0.1em",
+      }}>
+        Waterline
+      </span>
+    </div>
+
+    {/* BELOW WATERLINE */}
+    <div style={{ padding: mobile ? "14px 14px 16px" : "18px 24px 20px", background: T.surfaceActive }}>
+      <div style={{ fontFamily: T.mono, fontSize: "9px", color: T.accent, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "12px", marginTop: "4px" }}>
+        The system no one owns yet
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: mobile ? "1fr" : "repeat(2, 1fr)", gap: "8px" }}>
+        {account.opportunityParts.map((item, i) => (
+          <div key={i} style={{ display: "flex", gap: "10px", alignItems: "flex-start", padding: "10px 12px", background: T.bg, borderRadius: T.r, border: `1px solid ${T.accentDim}` }}>
+            <span style={{ color: T.accent, fontFamily: T.mono, fontSize: "11px", flexShrink: 0, paddingTop: "1px" }}>›</span>
+            <span style={{ fontFamily: T.sans, fontSize: "12px", color: T.textMuted, lineHeight: "1.5" }}>{item}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+  </div>
+);
+
 // ─── MAIN APP ───
 export default function Vantage() {
   const mobile = useIsMobile();
@@ -121,7 +171,7 @@ export default function Vantage() {
         </div>
 
         {/* TENSIONS + STAKEHOLDERS */}
-        <div style={{ display: "grid", gridTemplateColumns: mobile ? "1fr" : "1fr 1fr", gap: "14px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: mobile ? "1fr" : "1fr 1fr", gap: "14px", marginBottom: "14px" }}>
           <div style={{ background: T.surface, borderRadius: T.r, border: `1px solid ${T.border}`, padding: mobile ? "14px" : "18px 22px" }}>
             <div style={{ fontFamily: T.mono, fontSize: "9px", color: T.amber, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "12px" }}>Tensions</div>
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
@@ -145,6 +195,9 @@ export default function Vantage() {
             </div>
           </div>
         </div>
+
+        {/* ICEBERG */}
+        <IcebergPanel mobile={mobile} />
 
       </div>
 
