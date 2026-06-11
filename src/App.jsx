@@ -167,6 +167,86 @@ const DiscoveryPanel = ({ mobile }) => {
   );
 };
 
+// ─── ENGAGEMENT PANEL ───
+const EngagementPanel = ({ mobile }) => {
+  const totalWeeks = Math.max(...account.engagement.map(m => m.weeks));
+  // Rough total assuming milestones run mostly sequentially with some overlap
+  const totalWeeksSequential = account.engagement.reduce((a, m) => a + m.weeks, 0);
+  const totalFee = account.engagement.reduce((a, m) => a + m.fee, 0);
+
+  return (
+    <div style={{ marginBottom: "14px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: mobile ? "1fr" : "3fr 2fr", gap: "14px", alignItems: "start" }}>
+
+        {/* OUTCOME-BASED COLUMN */}
+        <div style={{ background: T.surface, borderRadius: T.r, border: `1px solid ${T.border}`, overflow: "hidden" }}>
+          <div style={{ padding: mobile ? "14px 14px 10px" : "18px 22px 12px", borderBottom: `1px solid ${T.borderSubtle}` }}>
+            <div style={{ fontFamily: T.mono, fontSize: "9px", color: T.accent, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "4px" }}>Outcome-based</div>
+            <div style={{ display: "flex", gap: "16px", fontFamily: T.mono, fontSize: "11px", color: T.textMuted }}>
+              <span style={{ color: T.text, fontWeight: 700 }}>${totalFee}k</span>
+              <span>{totalWeeksSequential} weeks</span>
+              <span>{account.engagement.length} milestones</span>
+            </div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
+            {account.engagement.map((m, i) => (
+              <div key={i} style={{ padding: mobile ? "12px 14px" : "14px 22px", borderBottom: i < account.engagement.length - 1 ? `1px solid ${T.borderSubtle}` : "none" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: "8px", marginBottom: "5px" }}>
+                  <span style={{ fontFamily: T.mono, fontSize: "11px", fontWeight: 700, color: T.text }}>{m.milestone}</span>
+                  <div style={{ display: "flex", gap: "10px", flexShrink: 0 }}>
+                    <span style={{ fontFamily: T.mono, fontSize: "10px", color: T.textDim }}>{m.weeks}w</span>
+                    <span style={{ fontFamily: T.mono, fontSize: "10px", color: T.accent, fontWeight: 700 }}>${m.fee}k</span>
+                  </div>
+                </div>
+                <p style={{ fontFamily: T.sans, fontSize: "12px", color: T.textMuted, lineHeight: "1.5", margin: "0 0 6px 0" }}>{m.outcome}</p>
+                <div style={{ display: "flex", gap: "6px", alignItems: "flex-start" }}>
+                  <span style={{ fontFamily: T.mono, fontSize: "9px", color: T.green, textTransform: "uppercase", letterSpacing: "0.06em", flexShrink: 0, paddingTop: "2px" }}>Value</span>
+                  <span style={{ fontFamily: T.sans, fontSize: "11px", color: T.green, lineHeight: "1.4" }}>{m.valueMetric}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* T&M BASELINE COLUMN */}
+        <div style={{ background: T.surface, borderRadius: T.r, border: `1px solid ${T.border}`, overflow: "hidden" }}>
+          <div style={{ padding: mobile ? "14px 14px 10px" : "18px 22px 12px", borderBottom: `1px solid ${T.borderSubtle}` }}>
+            <div style={{ fontFamily: T.mono, fontSize: "9px", color: T.textDim, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "4px" }}>Time &amp; Materials — old motion</div>
+            <div style={{ display: "flex", gap: "16px", fontFamily: T.mono, fontSize: "11px", color: T.textMuted }}>
+              <span style={{ color: T.textMuted, fontWeight: 700 }}>${account.tmBaseline.fee}k</span>
+              <span>{account.tmBaseline.weeks} weeks</span>
+            </div>
+          </div>
+          <div style={{ padding: mobile ? "14px" : "16px 22px" }}>
+            <FieldRow label="Scope" value={account.tmBaseline.scope} />
+            <FieldRow label="Team" value={account.tmBaseline.team} />
+            <FieldRow label="Billing" value="Weekly T&M, scope drift risk on client" />
+            <div style={{ marginTop: "14px", padding: "10px 12px", background: T.amberDim, border: `1px solid ${T.amber}22`, borderRadius: T.r }}>
+              <p style={{ fontFamily: T.sans, fontSize: "11px", color: T.amber, lineHeight: "1.5", margin: 0 }}>{account.tmBaseline.note}</p>
+            </div>
+
+            <div style={{ marginTop: "16px", borderTop: `1px solid ${T.borderSubtle}`, paddingTop: "14px" }}>
+              <div style={{ fontFamily: T.mono, fontSize: "9px", color: T.textDim, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "10px" }}>What changes</div>
+              {[
+                ["Stakeholders", "1 → 3", T.accent],
+                ["Scope", "Build only → full system", T.accent],
+                ["Accountability", "Hours billed → outcomes met", T.green],
+                ["Risk", "Client owns drift → shared", T.green],
+              ].map(([label, value, color]) => (
+                <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "7px" }}>
+                  <span style={{ fontFamily: T.sans, fontSize: "11px", color: T.textDim }}>{label}</span>
+                  <span style={{ fontFamily: T.mono, fontSize: "10px", color, fontWeight: 600 }}>{value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
 // ─── ICEBERG PANEL ───
 const IcebergPanel = ({ mobile }) => (
   <div style={{ background: T.surface, borderRadius: T.r, border: `1px solid ${T.border}`, overflow: "hidden", marginBottom: "14px" }}>
@@ -246,7 +326,7 @@ export default function Vantage() {
             {[
               { label: "Account",    id: "section-account",    live: true  },
               { label: "Discovery",  id: "section-discovery",  live: true  },
-              { label: "Engagement", id: null,                 live: false },
+              { label: "Engagement", id: "section-engagement",  live: true  },
               { label: "Delivery",   id: null,                 live: false },
             ].map(({ label, id, live }) => (
               <button key={label}
@@ -332,6 +412,11 @@ export default function Vantage() {
         {/* DISCOVERY */}
         <div id="section-discovery" style={{ scrollMarginTop: "100px" }}>
           <DiscoveryPanel mobile={mobile} />
+        </div>
+
+        {/* ENGAGEMENT */}
+        <div id="section-engagement" style={{ scrollMarginTop: "100px" }}>
+          <EngagementPanel mobile={mobile} />
         </div>
 
       </div>

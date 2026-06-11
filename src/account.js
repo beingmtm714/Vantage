@@ -30,5 +30,53 @@ export const account = {
     "Process: shared workflows and a success metric",
     "Change management: enablement and governance the org adopts",
     "Build: the engineering IP that needs HTEC, e.g. the customer-facing SDK"
-  ]
+  ],
+
+  // Phase 3: outcome-based engagement model. Numbers are illustrative.
+  engagement: [
+    {
+      milestone: "1 · Visibility",
+      outcome: "Map where AI sits across all functions, who owns it, and where IP and security risk lives",
+      valueMetric: "Risk inventory signed off by CTO and COO",
+      weeks: 4,
+      fee: 60,
+    },
+    {
+      milestone: "2 · Tooling",
+      outcome: "Sanctioned AI tool stack deployed with access controls, data policy, and usage governance",
+      valueMetric: "Shadow tooling eliminated across all five functions",
+      weeks: 8,
+      fee: 140,
+    },
+    {
+      milestone: "3 · Process",
+      outcome: "Shared workflows and a single productivity metric adopted across engineering, docs, field, and support",
+      valueMetric: "Measurable reduction in time-to-answer for field and support teams",
+      weeks: 6,
+      fee: 100,
+    },
+    {
+      milestone: "4 · Change management",
+      outcome: "Every function head has adopted the standard and owns ongoing governance without HTEC in the room",
+      valueMetric: "Adoption rate above 80% across target roles",
+      weeks: 6,
+      fee: 90,
+    },
+    {
+      milestone: "5 · SDK Build",
+      outcome: "Customer-facing SDK delivered with AI-accelerated developer experience and integration tooling",
+      valueMetric: "Integration time for top three customer segments cut by half",
+      weeks: 12,
+      fee: 200,
+    },
+  ],
+
+  // T&M baseline: the old motion, for contrast only.
+  tmBaseline: {
+    scope: "Scoped engineering build — SDK and firmware integration layer for the CTO",
+    team: "4 HTEC engineers",
+    weeks: 24,
+    fee: 480,
+    note: "Single stakeholder. No tooling governance, no process, no change management. Org-wide AI risk unresolved.",
+  },
 };
