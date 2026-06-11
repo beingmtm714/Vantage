@@ -247,6 +247,77 @@ const EngagementPanel = ({ mobile }) => {
   );
 };
 
+// ─── DELIVERY PANEL ───
+const STATUS_COLOR = { done: "#34D399", "in progress": "#FBBF24", planned: "#8096B8" };
+const STATUS_BG    = { done: "rgba(52,211,153,0.12)", "in progress": "rgba(251,191,36,0.12)", planned: "rgba(128,150,184,0.08)" };
+
+const DeliveryPanel = ({ mobile }) => (
+  <div style={{ marginBottom: "14px" }}>
+
+    {/* MILESTONE TRACKER */}
+    <div style={{ background: T.surface, borderRadius: T.r, border: `1px solid ${T.border}`, overflow: "hidden", marginBottom: "10px" }}>
+      <div style={{ padding: mobile ? "14px 14px 10px" : "18px 22px 12px", borderBottom: `1px solid ${T.borderSubtle}`, display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+        <div style={{ fontFamily: T.mono, fontSize: "9px", color: T.textDim, textTransform: "uppercase", letterSpacing: "0.08em" }}>Delivery Tracker</div>
+        <div style={{ display: "flex", gap: "8px" }}>
+          {["done", "in progress", "planned"].map(s => (
+            <Tag key={s} label={s} color={STATUS_COLOR[s]} bg={STATUS_BG[s]} />
+          ))}
+        </div>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        {account.engagement.map((m, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "12px", padding: mobile ? "11px 14px" : "13px 22px", borderBottom: i < account.engagement.length - 1 ? `1px solid ${T.borderSubtle}` : "none", opacity: m.status === "planned" ? 0.6 : 1 }}>
+            {/* timeline dot */}
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0, paddingTop: "3px" }}>
+              <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: STATUS_COLOR[m.status], flexShrink: 0 }} />
+              {i < account.engagement.length - 1 && (
+                <div style={{ width: "1px", flex: 1, minHeight: "24px", background: T.borderSubtle, marginTop: "3px" }} />
+              )}
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: "8px", marginBottom: "3px" }}>
+                <span style={{ fontFamily: T.mono, fontSize: "11px", fontWeight: 700, color: T.text }}>{m.milestone}</span>
+                <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>
+                  <span style={{ fontFamily: T.mono, fontSize: "10px", color: T.textDim }}>{m.weeks}w · ${m.fee}k</span>
+                  <Tag label={m.status} color={STATUS_COLOR[m.status]} bg={STATUS_BG[m.status]} />
+                </div>
+              </div>
+              <p style={{ fontFamily: T.sans, fontSize: "12px", color: T.textMuted, lineHeight: "1.45", margin: "0 0 4px 0" }}>{m.outcome}</p>
+              {m.status !== "planned" && (
+                <div style={{ display: "flex", gap: "5px", alignItems: "flex-start" }}>
+                  <span style={{ fontFamily: T.mono, fontSize: "9px", color: T.green, textTransform: "uppercase", letterSpacing: "0.06em", flexShrink: 0, paddingTop: "2px" }}>Value</span>
+                  <span style={{ fontFamily: T.sans, fontSize: "11px", color: T.green, lineHeight: "1.4" }}>{m.valueMetric}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* EXPANSION SIGNALS */}
+    <div style={{ background: T.surface, borderRadius: T.r, border: `1px solid ${T.border}`, overflow: "hidden" }}>
+      <div style={{ padding: mobile ? "14px 14px 10px" : "18px 22px 12px", borderBottom: `1px solid ${T.borderSubtle}` }}>
+        <div style={{ fontFamily: T.mono, fontSize: "9px", color: T.textDim, textTransform: "uppercase", letterSpacing: "0.08em" }}>Expansion Signals</div>
+      </div>
+      {account.expansionSignals.map((s, i) => (
+        <div key={i} style={{ padding: mobile ? "12px 14px" : "16px 22px", borderBottom: i < account.expansionSignals.length - 1 ? `1px solid ${T.borderSubtle}` : "none" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
+            <Tag label={s.func} color={T.purple} bg={T.purpleDim} />
+            <span style={{ fontFamily: T.mono, fontSize: "9px", color: T.textDim, textTransform: "uppercase", letterSpacing: "0.06em" }}>New signal</span>
+          </div>
+          <p style={{ fontFamily: T.sans, fontSize: "12px", color: T.textMuted, lineHeight: "1.5", margin: "0 0 8px 0" }}>{s.signal}</p>
+          <div style={{ display: "flex", gap: "6px", alignItems: "flex-start", padding: "8px 12px", background: T.accentDim, borderRadius: T.r, border: `1px solid rgba(79,140,255,0.15)` }}>
+            <span style={{ fontFamily: T.mono, fontSize: "9px", color: T.accent, textTransform: "uppercase", letterSpacing: "0.06em", flexShrink: 0, paddingTop: "2px" }}>Opp</span>
+            <span style={{ fontFamily: T.sans, fontSize: "12px", color: T.accent, lineHeight: "1.4" }}>{s.opportunity}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+
+  </div>
+);
+
 // ─── ICEBERG PANEL ───
 const IcebergPanel = ({ mobile }) => (
   <div style={{ background: T.surface, borderRadius: T.r, border: `1px solid ${T.border}`, overflow: "hidden", marginBottom: "14px" }}>
@@ -327,7 +398,7 @@ export default function Vantage() {
               { label: "Account",    id: "section-account",    live: true  },
               { label: "Discovery",  id: "section-discovery",  live: true  },
               { label: "Engagement", id: "section-engagement",  live: true  },
-              { label: "Delivery",   id: null,                 live: false },
+              { label: "Delivery",   id: "section-delivery",   live: true  },
             ].map(({ label, id, live }) => (
               <button key={label}
                 onClick={() => id && document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" })}
@@ -417,6 +488,11 @@ export default function Vantage() {
         {/* ENGAGEMENT */}
         <div id="section-engagement" style={{ scrollMarginTop: "100px" }}>
           <EngagementPanel mobile={mobile} />
+        </div>
+
+        {/* DELIVERY */}
+        <div id="section-delivery" style={{ scrollMarginTop: "100px" }}>
+          <DeliveryPanel mobile={mobile} />
         </div>
 
       </div>

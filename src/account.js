@@ -33,6 +33,7 @@ export const account = {
   ],
 
   // Phase 3: outcome-based engagement model. Numbers are illustrative.
+  // Phase 4: status added. Illustrative mid-engagement snapshot.
   engagement: [
     {
       milestone: "1 · Visibility",
@@ -40,6 +41,7 @@ export const account = {
       valueMetric: "Risk inventory signed off by CTO and COO",
       weeks: 4,
       fee: 60,
+      status: "done",
     },
     {
       milestone: "2 · Tooling",
@@ -47,6 +49,7 @@ export const account = {
       valueMetric: "Shadow tooling eliminated across all five functions",
       weeks: 8,
       fee: 140,
+      status: "in progress",
     },
     {
       milestone: "3 · Process",
@@ -54,6 +57,7 @@ export const account = {
       valueMetric: "Measurable reduction in time-to-answer for field and support teams",
       weeks: 6,
       fee: 100,
+      status: "in progress",
     },
     {
       milestone: "4 · Change management",
@@ -61,6 +65,7 @@ export const account = {
       valueMetric: "Adoption rate above 80% across target roles",
       weeks: 6,
       fee: 90,
+      status: "planned",
     },
     {
       milestone: "5 · SDK Build",
@@ -68,6 +73,21 @@ export const account = {
       valueMetric: "Integration time for top three customer segments cut by half",
       weeks: 12,
       fee: 200,
+      status: "planned",
+    },
+  ],
+
+  // Phase 4: expansion signals that loop back to a new opportunity.
+  expansionSignals: [
+    {
+      func: "Field Engineering",
+      signal: "Team adopted the AI stack ahead of schedule and is asking HTEC to build a customer-facing integration layer on top of it — scope the SDK milestone to start earlier.",
+      opportunity: "Accelerate milestone 5 and expand SDK scope to include a partner API tier",
+    },
+    {
+      func: "Ops / Supply Chain",
+      signal: "Yield-analysis prototype built by the ops team during tooling rollout surfaced a real ML signal — COO wants to know if HTEC can own a production build.",
+      opportunity: "New engagement: ML-powered yield prediction model, separate SOW",
     },
   ],
 
