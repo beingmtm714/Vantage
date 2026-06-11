@@ -44,6 +44,129 @@ const FieldRow = ({ label, value, color }) => (
   </div>
 );
 
+// ─── DISCOVERY SYSTEM PROMPT ───
+const DISCOVERY_PROMPT = `You are a discovery copilot for an HTEC client partner working an advanced-tech account where AI use has spread across the whole org, not just engineering. The old motion sold a scoped build to the CTO. The new motion is a combined sale and change-management engagement across a buying group.
+
+Given what the client partner knows about the account and its stakeholders, return two things.
+
+1. The sharpest discovery questions to ask across the buying group (CTO, ops, and function heads) to map where AI is already used, where the IP and security risk sits, and where the process and tooling gaps are.
+
+2. A scoping hypothesis for a combined engagement covering tooling, process, change management, and the targeted engineering build HTEC should own, framed as outcomes, not headcount.
+
+Be concrete. No filler.`;
+
+// ─── DISCOVERY PANEL ───
+const DiscoveryPanel = ({ mobile }) => {
+  const [notes, setNotes] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState(null);
+
+  const handleSubmit = async () => {
+    if (!notes.trim()) return;
+    setLoading(true);
+    setResult(null);
+    setError(null);
+
+    const userMessage = [
+      `Account: ${account.name} — ${account.profile}`,
+      `Stakeholders: ${account.stakeholders.map(s => `${s.role} (${s.stake})`).join("; ")}`,
+      `AI in use now: ${account.newReality.join("; ")}`,
+      `Tensions: ${account.tensions.join("; ")}`,
+      ``,
+      `What the partner knows so far:`,
+      notes,
+    ].join("\n");
+
+    try {
+      const res = await fetch("/.netlify/functions/claude", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-6",
+          max_tokens: 1200,
+          skipWebSearch: true,
+          system: DISCOVERY_PROMPT,
+          messages: [{ role: "user", content: userMessage }],
+        }),
+      });
+      const data = await res.json();
+      if (data.type === "error" || !data.content) {
+        setError(data.error?.message || "No response from API.");
+      } else {
+        const text = data.content.filter(b => b.type === "text").map(b => b.text).join("");
+        setResult(text);
+      }
+    } catch (err) {
+      setError("Request failed. Check connection and try again.");
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div style={{ background: T.surface, borderRadius: T.r, border: `1px solid ${T.border}`, padding: mobile ? "16px" : "22px 24px", marginBottom: "14px" }}>
+      <div style={{ fontFamily: T.mono, fontSize: "9px", color: T.textDim, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "14px" }}>
+        Discovery Copilot
+      </div>
+
+      <textarea
+        value={notes}
+        onChange={e => setNotes(e.target.value)}
+        placeholder={"What do you know about this account so far?\n\nE.g. who you've spoken to, what they said, where the friction is, what the sponsor cares about."}
+        style={{ width: "100%", height: mobile ? "110px" : "140px", background: T.bg, border: `1px solid ${result ? T.borderSubtle : T.border}`, borderRadius: T.r, padding: "12px 14px", fontFamily: T.sans, fontSize: "13px", color: T.text, resize: "vertical", outline: "none", boxSizing: "border-box", lineHeight: "1.6" }}
+      />
+
+      <button
+        onClick={handleSubmit}
+        disabled={!notes.trim() || loading}
+        style={{ marginTop: "10px", padding: "10px 22px", border: "none", borderRadius: T.r, fontFamily: T.mono, fontSize: "11px", fontWeight: 600, cursor: notes.trim() && !loading ? "pointer" : "default", background: T.accent, color: "#fff", letterSpacing: "0.04em", opacity: !notes.trim() || loading ? 0.45 : 1 }}
+      >
+        {loading ? "Analyzing..." : "Run Discovery"}
+      </button>
+
+      {error && (
+        <div style={{ marginTop: "12px", padding: "10px 14px", background: T.redDim, border: `1px solid ${T.red}`, borderRadius: T.r, fontFamily: T.mono, fontSize: "11px", color: T.red }}>
+          {error}
+        </div>
+      )}
+
+      {result && (
+        <div style={{ marginTop: "14px", background: T.bg, border: `1px solid ${T.accent}`, borderRadius: T.r, overflow: "hidden" }}>
+          <div style={{ padding: mobile ? "10px 12px 4px" : "14px 18px 6px", fontFamily: T.mono, fontSize: "9px", color: T.accent, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+            Discovery Output
+          </div>
+          <div style={{ padding: mobile ? "4px 12px 14px" : "4px 18px 18px" }}>
+            {result.split("\n").filter(l => l.trim()).map((line, i) => {
+              const isBullet = /^[-•*]\s/.test(line.trim());
+              const isNumbered = /^\d+\.\s/.test(line.trim());
+              const isHeading = /^\*\*/.test(line.trim()) || (isNumbered && line.trim().length < 80);
+              const text = line.trim().replace(/^\*\*|\*\*$/g, "").replace(/^[-•*]\s*/, "").replace(/^\d+\.\s*/, "");
+              if (isHeading && (isNumbered || /^\*\*/.test(line.trim()))) {
+                return (
+                  <div key={i} style={{ fontFamily: T.sans, fontSize: "13px", fontWeight: 700, color: T.text, marginTop: i === 0 ? 0 : "16px", marginBottom: "6px", lineHeight: "1.4" }}>
+                    {text}
+                  </div>
+                );
+              }
+              if (isBullet) {
+                return (
+                  <div key={i} style={{ display: "flex", gap: "10px", alignItems: "flex-start", marginBottom: "5px" }}>
+                    <span style={{ color: T.accent, fontFamily: T.mono, fontSize: "10px", flexShrink: 0, paddingTop: "3px" }}>›</span>
+                    <span style={{ fontFamily: T.sans, fontSize: "13px", color: T.textMuted, lineHeight: "1.6" }}>{text}</span>
+                  </div>
+                );
+              }
+              return (
+                <p key={i} style={{ fontFamily: T.sans, fontSize: "13px", color: T.textMuted, lineHeight: "1.6", margin: "0 0 6px 0" }}>{text}</p>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 // ─── ICEBERG PANEL ───
 const IcebergPanel = ({ mobile }) => (
   <div style={{ background: T.surface, borderRadius: T.r, border: `1px solid ${T.border}`, overflow: "hidden", marginBottom: "14px" }}>
@@ -120,8 +243,15 @@ export default function Vantage() {
         {/* NAV — placeholder anchors for phases 1–4 */}
         <div style={{ borderBottom: `1px solid ${T.border}`, padding: `0 ${px}`, overflowX: "auto", WebkitOverflowScrolling: "touch", scrollbarWidth: "none", background: T.surface }}>
           <div style={{ maxWidth: "1100px", margin: "0 auto", display: "flex", height: "44px", alignItems: "center" }}>
-            {["Account", "Discovery", "Engagement", "Delivery"].map(label => (
-              <button key={label} style={{ padding: "0 18px", height: "44px", border: "none", background: "transparent", fontFamily: T.mono, fontSize: "11px", color: T.textMuted, cursor: "default", whiteSpace: "nowrap", textTransform: "uppercase", letterSpacing: "0.08em", flexShrink: 0, opacity: 0.5 }}>
+            {[
+              { label: "Account",    id: "section-account",    live: true  },
+              { label: "Discovery",  id: "section-discovery",  live: true  },
+              { label: "Engagement", id: null,                 live: false },
+              { label: "Delivery",   id: null,                 live: false },
+            ].map(({ label, id, live }) => (
+              <button key={label}
+                onClick={() => id && document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                style={{ padding: "0 18px", height: "44px", border: "none", background: "transparent", fontFamily: T.mono, fontSize: "11px", color: live ? T.textMuted : T.textDim, cursor: live ? "pointer" : "default", whiteSpace: "nowrap", textTransform: "uppercase", letterSpacing: "0.08em", flexShrink: 0, opacity: live ? 1 : 0.4 }}>
                 {label}
               </button>
             ))}
@@ -133,7 +263,7 @@ export default function Vantage() {
       <div style={{ maxWidth: "1100px", margin: "0 auto", padding: `24px ${px}` }}>
 
         {/* ACCOUNT HEADER */}
-        <div style={{ background: T.surface, borderRadius: T.r, border: `1px solid ${T.border}`, padding: mobile ? "16px" : "22px 24px", marginBottom: "20px" }}>
+        <div id="section-account" style={{ background: T.surface, borderRadius: T.r, border: `1px solid ${T.border}`, padding: mobile ? "16px" : "22px 24px", marginBottom: "20px" }}>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "12px", marginBottom: "14px" }}>
             <div>
               <div style={{ fontFamily: T.mono, fontSize: "9px", color: T.textDim, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "6px" }}>Account</div>
@@ -198,6 +328,11 @@ export default function Vantage() {
 
         {/* ICEBERG */}
         <IcebergPanel mobile={mobile} />
+
+        {/* DISCOVERY */}
+        <div id="section-discovery" style={{ scrollMarginTop: "100px" }}>
+          <DiscoveryPanel mobile={mobile} />
+        </div>
 
       </div>
 
